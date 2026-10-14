@@ -49,10 +49,10 @@ h1 {
 
 @st.cache_resource
 def load_model():
-    return joblib.load("models/spam_model.joblib")
+    return joblib.load("spam_model.joblib")
 
 
-model_path = Path("models/spam_model.joblib")
+model_path = Path("spam_model.joblib")
 
 st.title("📧 SpamGuard AI")
 st.markdown(
