@@ -2,50 +2,86 @@ import streamlit as st
 import joblib
 from pathlib import Path
 
-# Page configuration
 st.set_page_config(
-    page_title="Email Spam Detector",
+    page_title="SpamGuard AI",
     page_icon="📧",
     layout="centered"
 )
 
-# Load the trained machine learning model
+# Custom styling
+st.markdown("""
+<style>
+.stApp {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+}
+
+h1 {
+    text-align: center;
+    color: #60a5fa;
+}
+
+.subtitle {
+    text-align: center;
+    color: #cbd5e1;
+    font-size: 17px;
+}
+
+.stButton > button {
+    width: 100%;
+    background-color: #2563eb;
+    color: white;
+    border-radius: 10px;
+    height: 48px;
+    font-weight: bold;
+}
+
+.result-card {
+    padding: 20px;
+    border-radius: 12px;
+    background-color: #1e293b;
+    text-align: center;
+    margin-top: 20px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 @st.cache_resource
 def load_model():
     return joblib.load("models/spam_model.joblib")
 
 
-# Main application
-st.title("📧 Email Spam Detection System")
+model_path = "models/spam_model.joblib"
 
-st.write(
-    "This application uses Machine Learning "
-    "to classify text as spam or legitimate."
+st.title("📧 SpamGuard AI")
+st.markdown(
+    '<p class="subtitle">Machine Learning Text Spam Detector</p>',
+    unsafe_allow_html=True
 )
 
 st.divider()
 
-# Check whether the model exists
-model_path = Path("models/spam_model.joblib")
+st.markdown("### 🔍 Analyse a Message")
+
+st.write(
+    "Paste a message below and let the machine learning "
+    "model classify it."
+)
 
 if not model_path.exists():
-    st.error(
-        "Trained model not found! "
-        "Please run train_model.py first."
-    )
+    st.error("Model not found. Train the model first.")
     st.stop()
 
 model = load_model()
 
-# User input
 message = st.text_area(
-    "Enter your email or message below:",
-    placeholder="Type or paste your message here...",
+    "Message",
+    placeholder="Paste your message here...",
     height=180
 )
 
-# Prediction button
-if st.button("🔍 Detect Spam", use_container_width=True):
+if st.button("🚀 Analyse Message"):
 
     if not message.strip():
         st.warning("Please enter a message first.")
@@ -54,29 +90,30 @@ if st.button("🔍 Detect Spam", use_container_width=True):
         prediction = model.predict([message])[0]
 
         st.divider()
-        st.subheader("Detection Result")
+        st.subheader("Analysis Result")
 
         if prediction == "spam":
             st.error("🚨 SPAM DETECTED")
 
             st.write(
-                "The model identifies this text "
-                "as resembling spam."
+                "The model classified this text as spam."
             )
 
         else:
             st.success("✅ LIKELY LEGITIMATE")
 
             st.write(
-                "The model identifies this text "
-                "as resembling a legitimate message."
+                "The model classified this text as legitimate."
             )
 
         st.caption(
-            "This is an educational ML prediction, "
-            "not a guarantee that a message is safe."
+            "Educational prototype: predictions can be incorrect. "
+            "A legitimate-looking message is not necessarily safe."
         )
 
 st.divider()
 
-st.caption("Built with Python, Scikit-learn and Streamlit")
+st.markdown(
+    "<center>Built with Python • Scikit-learn • Streamlit</center>",
+    unsafe_allow_html=True
+)
